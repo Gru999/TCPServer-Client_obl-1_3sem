@@ -1,6 +1,5 @@
 import threading
 from socket import *
-import random
 
 serverName = "localHost"
 serverPort = 12000
@@ -14,17 +13,22 @@ def handleClient(connectionSocket, address):
     print(f"Received: {sentence}")
     splitSentence = sentence.split(';')
 
-    if len(splitSentence) != 3 or splitSentence[0] not in ["Random", "Add", "Subtract"]:
+    if len(splitSentence) != 3:
         result = "Invalid input format"
     else:
-        num1 = int(splitSentence[1])
-        num2 = int(splitSentence[2])
-        if splitSentence[0] == "Random":
+        command, num1, num2 = splitSentence
+        num1 = int(num1)
+        num2 = int(num2)
+
+        if command == "Random":
+            import random
             result = str(random.randint(num1, num2))
-        elif splitSentence[0] == "Add":
+        elif command == "Add":
             result = str(num1 + num2)
-        elif splitSentence[0] == "Subtract":
+        elif command == "Subtract":
             result = str(num1 - num2)
+        else:
+            result = "Invalid command"
 
     connectionSocket.send(result.encode())
     connectionSocket.close()
